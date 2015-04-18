@@ -4,12 +4,16 @@
  */
 public class Dictionary {
 
-	/* Set the fixed sized wordlist file */
+	// Set the fixed sized wordlist file
 	public static final int NUMBEROFTERMS = 3560655;
 	
 	private Term[] wordlist;
 	
-	
+	/**
+	 * Constructor for Dictionary.
+	 * 
+	 * @param dictionaryterms dictionary terms.
+	 */
 	public Dictionary (Term[] dictionaryterms) {
 		
 		// Check dictionary terms length in case of unexpected results.
@@ -37,6 +41,20 @@ public class Dictionary {
 		return wordlist;
 	}
 	
+	/**
+	 * Compute byte position of beginning of term's posting list.
+	 * Each posting is a <int document-id, int term-frequency> with totally 8 bytes.
+	 * 
+	 * Postings file is ascending order according to Term token. 
+	 * 
+	 * @param term
+	 * @return byte position of beginning of term's posting list.
+	 */
+	public int getBeginningOfPostingList (Term term) {
+		
+		
+		return 0;
+	}
 
 	
 	

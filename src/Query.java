@@ -15,7 +15,7 @@ public class Query {
 	 * 
 	 * @param query	raw query string.
 	 */
-	public Query(String query) {
+	public Query(Term[] terms) {
 		
 		
 	}

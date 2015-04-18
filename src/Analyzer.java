@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  *  Document-at-a-time (DAAT) query processing with WAND optimization
  *  @author Emre Can Kucukoglu
@@ -12,6 +15,7 @@ public class Analyzer {
 	 * Main function of project.
 	 *  
 	 * @param args
+	 * @param Comparator 
 	 */
 	public static void main(String[] args) {
 		
@@ -21,7 +25,12 @@ public class Analyzer {
 		
 		//Posting[] temppostings = Parser.getPostings(1, 10);
 		
-
+		//Heap<Document> result = new Heap<Document>(new Document());
+		
+		
+		
 	}
 
 }
+
+

@@ -12,19 +12,19 @@ Counts of the evaluated and skipped posting elements per query are counted, the 
 
 # Data files:
 
-* Dictionary file:
+* Dictionary file:	
 For each line
 |string token|	|int length-of-postings-list|	|float precomputed-idf| 
 
-* Query file:
+* Query file:	
 Each line is a |string query|
 
-* Vector lengths file
+* Vector lengths file:	
 For each line
 |int document-id|	|float document-length|
 
-* Postings binary file
-Each posting is a form of:
+* Postings binary file:	
+Each posting is a form of 
 |int document-id, int term-frequency| and each integer takes 4 bytes.
 
 # Additional documents

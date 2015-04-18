@@ -1,22 +1,20 @@
 /**
  *  This class represents the Query.
- *  Each query has term or terms.
+ *  Each query has word or words.
  *  
- *  Seperator to split terms from query, are defined statically.
+ *  Seperator to split words from query, are defined statically.
  */
 public class Query {
 	
-	public static final char WORD_SEPERATOR = ' ';
-	
-	private Term[] terms;
+	private String[] words;
 	
 	/**
 	 * Constructor for query.
 	 * 
 	 * @param query	raw query string.
 	 */
-	public Query(Term[] terms) {
-		
+	public Query(String[] words) {
+		this.words = words;
 		
 	}
 	
@@ -25,10 +23,10 @@ public class Query {
 	
 	
 	/**
-	 * @return the terms
+	 * @return the words
 	 */
-	public Term[] getTerms() {
-		return terms;
+	public String[] getTerms() {
+		return words;
 	}
 
 	

@@ -1,4 +1,9 @@
-
+/**
+ *  This class represents the Query.
+ *  Each query has term or terms.
+ *  
+ *  Seperator to split terms from query, are defined statically.
+ */
 public class Query {
 	
 	public static final char WORD_SEPERATOR = ' ';

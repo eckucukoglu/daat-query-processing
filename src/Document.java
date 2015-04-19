@@ -4,12 +4,12 @@ import java.util.Comparator;
  *  This class represents the Document.
  *  Each document has a document-id and score value.
  *  
+ *  Comparator prefers higher scores.
  */
 public class Document implements Comparator<Document> {
 
 	private int docid;
 	private float score;
-	
 	
 	/**
 	 * Constructor for Document.
@@ -58,7 +58,4 @@ public class Document implements Comparator<Document> {
 		
 		return retVal;
 	}
-	
-	
-	
 }

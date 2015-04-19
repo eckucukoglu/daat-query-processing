@@ -2,7 +2,6 @@
  *  This class represents the Posting.
  *  Each posting has document id value and 
  *  term frequency value for a term.
- * 
  */
 public class Posting {
 
@@ -18,7 +17,6 @@ public class Posting {
 	public Posting(int docid, int tf) {
 		this.docid = docid;
 		this.tf = tf;
-		
 	}
 	
 	/**
@@ -27,7 +25,6 @@ public class Posting {
 	public int getTf() {
 		return tf;
 	}
-	
 
 	/**
 	 * @return the docid
@@ -35,7 +32,4 @@ public class Posting {
 	public int getDocid() {
 		return docid;
 	}
-	
-	
-	
 }

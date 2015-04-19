@@ -14,13 +14,9 @@ public class Query {
 	 * @param query	raw query string.
 	 */
 	public Query(String[] words) {
-		this.words = words;
 		
+		this.words = words;
 	}
-	
-	
-	
-	
 	
 	/**
 	 * @return the words
@@ -28,10 +24,4 @@ public class Query {
 	public String[] getWords() {
 		return words;
 	}
-
-	
-	
-	
-	
-	
 }

@@ -44,7 +44,6 @@ public class Term {
 		this.postingsIndex = term.getPostingsIndex();
 	}
 	
-	
 	/**
 	 * Return token of a term
 	 * 
@@ -62,7 +61,6 @@ public class Term {
 	public int getLength() {
 		return lengthOfPostingsList;
 	}
-
 	
 	/**
 	 * Return precomputed idf value of a term
@@ -74,7 +72,7 @@ public class Term {
 	}
 
 	/**
-	 * @return the postingsIndex
+	 * @return Term's starting posting position for the postings file.
 	 */
 	public int getPostingsIndex() {
 		return postingsIndex;

@@ -29,6 +29,9 @@ public class Parser {
 	public static final String POSTINGSFILE = "postings.bin";
 	
 	public static final String WORD_SEPERATOR = " ";
+
+	public static final String DAAT = "DAAT";
+	public static final String DAAT_WITH_WAND = "DAAT+WAND";
 	
 	/**
 	 * Return document length, read from LENGTHSFILE file with document id.
@@ -37,7 +40,7 @@ public class Parser {
 	 * 
 	 * @return document lengths.
 	 */
-	public static float[] getDocLength () {
+	public static float[] getDocLengths () {
 		float[] docLength = new float[NUMBEROFDOCUMENTS];
 		
 		Path path = Paths.get(System.getProperty("user.dir"), DATADIR, LENGTHSFILE);
@@ -102,7 +105,6 @@ public class Parser {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        
 		
 		return dictionaryTerms;
 	}
@@ -172,7 +174,6 @@ public class Parser {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        
 		
 		return postings;
 	}

@@ -158,5 +158,4 @@ public class Heap<T> {
 			public void remove() { }
 		};
 	}
-
 }

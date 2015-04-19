@@ -11,9 +11,8 @@ import java.util.ArrayList;
  * a mode selection. Default one is Document-at-a-time "DAAT",
  * for more selection:
  * 
- * > "DAAT+WAND":	Document-at-a-time with WAND optimization in heap selection 
- * 	elemination.
- * > "DAAT"		:	Default document-at-a-time query processing.
+ * > "DAAT+WAND": Document-at-a-time with WAND optimization in heap selection elemination.
+ * > "DAAT" : Default document-at-a-time query processing.
  * 
  * 
  * @author Emre Can Kucukoglu
@@ -71,13 +70,17 @@ public class QueryProcessor {
 		
 		ArrayList<Term> terms = this.findMatchingTerms(this.queries[this.bracket]);
 		
+		if (terms.size() == 0)
+			return null;
 		
-		Heap<Document> winners = new Heap<Document>(new Document()); 
+		Heap<Document> winners = null;
 		
-			
+		if (this.mode.equals(Parser.DAAT)) {
+			winners = this.daatProcessing(terms);
+		} else if (this.mode.equals(Parser.DAAT_WITH_WAND)) {
+			winners = this.daatProcessing("WAND", terms);
+		}
 		
-		
-			
 		this.bracket = this.bracket + 1;
 		return winners;
 	}
@@ -158,8 +161,57 @@ public class QueryProcessor {
 			terms.add(queryTerm);
 		}
 		
-		
 		return terms;
+	}
+	
+	/**
+	 * Document-at-a-time processing with given terms.
+	 * 
+	 * @param terms
+	 * @return
+	 */
+	private Heap<Document> daatProcessing (ArrayList<Term> terms) {
+		int docidIndex = 0;
+		int[] docidIndexes = new int[terms.size()];
+		Posting[][] postings = new Posting[terms.size()][];
+				
+		for (int i = 0; i < terms.size(); ++i) {
+			postings[i] = Parser.getPostings(terms.get(i).getPostingsIndex(), terms.get(i).getLength());
+			docidIndexes[i] = 0;
+		}
+		
+		boolean finished = false;
+		
+		while (!finished) {
+			
+			for (int i = 0; i < terms.size(); ++i) {
+				docidIndexes[i] = postings[i][0].getDocid();
+			}
+			
+			docidIndex = findMin(docidIndexes);
+			// TODO:
+			
+			
+		}
+		
+		
+		return null;
+		
+	}
+
+	/**
+	 * Document-at-a-time processing with given terms and
+	 * optional optimization selection.
+	 * 
+	 * @param optimization
+	 * @param terms
+	 * @return
+	 */
+	private Heap<Document> daatProcessing (String optimization, ArrayList<Term> terms) {
+		
+		
+		return null;
+		
 	}
 	
 	/**
@@ -169,8 +221,6 @@ public class QueryProcessor {
 		return dictionary;
 	}
 
-
-
 	/**
 	 * @return the queries
 	 */
@@ -178,16 +228,12 @@ public class QueryProcessor {
 		return queries;
 	}
 
-
-
 	/**
 	 * @return the vectorLengths
 	 */
 	public float[] getVectorLengths() {
 		return vectorLengths;
 	}
-
-
 
 	/**
 	 * @return the mode
@@ -201,5 +247,23 @@ public class QueryProcessor {
 	 */
 	public int getBracket() {
 		return bracket;
+	}
+	
+	/**
+	 * Find min value in the array and return its index.
+	 * 
+	 * @param array
+	 * @return index of minimum element
+	 */
+	static int findMin (int[] array) {
+		int min = array[0];
+		
+		for (int i = 0; i < array.length; ++i) {
+			if (min > array[i]) {
+				min = array[i];
+			}
+		}
+		
+		return min;
 	}
 }

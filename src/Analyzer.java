@@ -21,7 +21,7 @@ public class Analyzer {
 		
 		Dictionary dictionary = new Dictionary(Parser.getDictionaryTerms());
 		Query[] queries = Parser.getQueries();
-		float[] documentLengths = Parser.getDocLength(); 
+		float[] documentLengths = Parser.getDocLengths(); 
 		
 		QueryProcessor qp = new QueryProcessor(dictionary, queries, documentLengths);
 		// QueryProcessor qpw = new QueryProcessor("DAAT+WAND", dictionary, queries, documentLengths);

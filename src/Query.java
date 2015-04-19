@@ -25,7 +25,7 @@ public class Query {
 	/**
 	 * @return the words
 	 */
-	public String[] getTerms() {
+	public String[] getWords() {
 		return words;
 	}
 

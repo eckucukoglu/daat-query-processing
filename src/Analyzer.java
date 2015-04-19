@@ -19,16 +19,16 @@ public class Analyzer {
 	 */
 	public static void main(String[] args) {
 		
-		//Dictionary dictonary = new Dictionary(Parser.getDictionaryTerms());
-		//Query[] queries = Parser.getQueries();
-		//float[] documentLengths = Parser.getDocLength(); 
+		Dictionary dictionary = new Dictionary(Parser.getDictionaryTerms());
+		Query[] queries = Parser.getQueries();
+		float[] documentLengths = Parser.getDocLength(); 
 		
-		//Posting[] temppostings = Parser.getPostings(1, 10);
+		QueryProcessor qp = new QueryProcessor(dictionary, queries, documentLengths);
+		// QueryProcessor qpw = new QueryProcessor("DAAT+WAND", dictionary, queries, documentLengths);
 		
-		//Heap<Document> result = new Heap<Document>(new Document());
-		
-		
-		
+		//Heap<Document>[] resultants = qp.iterate(0);
+		Heap<Document> winningDocuments = qp.iterate();
+		System.out.println(1);
 	}
 
 }

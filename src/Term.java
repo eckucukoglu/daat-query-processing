@@ -10,6 +10,13 @@ public class Term {
 	private String token;
 	private int lengthOfPostingsList;
 	private float idf;
+	/** 
+	 * Term's starting position for a postings file. 
+	 * It should be computed on-the-fly from the beginning
+	 * of the dictionary. However if one times computed, since 
+	 * it can not changed, remembering it is a good idea.
+	 */
+	private int postingsIndex; 
 	
 	/**
 	 * Constructor for term.
@@ -22,6 +29,7 @@ public class Term {
 		this.token = token;
 		this.lengthOfPostingsList = lengthOfPostingsList;
 		this.idf = idf;
+		this.postingsIndex = -1;
 	}
 	
 	/**
@@ -33,6 +41,7 @@ public class Term {
 		this.token = term.getToken();
 		this.lengthOfPostingsList = term.getLength();
 		this.idf = term.getIdf();
+		this.postingsIndex = term.getPostingsIndex();
 	}
 	
 	
@@ -64,4 +73,18 @@ public class Term {
 		return idf;
 	}
 
+	/**
+	 * @return the postingsIndex
+	 */
+	public int getPostingsIndex() {
+		return postingsIndex;
+	}
+
+	/**
+	 * Set term's posting list location 
+	 * in postings file, if computed.
+	 */
+	public void setPostingsIndex(int index) {
+		this.postingsIndex = index;
+	}
 }

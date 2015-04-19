@@ -4,7 +4,7 @@
  */
 public class Dictionary {
 
-	private Term[] wordlist;
+	private Term[] termlist;
 	
 	/**
 	 * Constructor for Dictionary.
@@ -13,7 +13,7 @@ public class Dictionary {
 	 */
 	public Dictionary (Term[] dictionaryterms) {
 		
-		this.wordlist = dictionaryterms;
+		this.termlist = dictionaryterms;
 		
 		
 		
@@ -22,10 +22,10 @@ public class Dictionary {
 	
 	
 	/**
-	 * @return the wordlist
+	 * @return the termlist
 	 */
-	public Term[] getWordlist() {
-		return wordlist;
+	public Term[] getTermlist() {
+		return termlist;
 	}
 	
 	/**

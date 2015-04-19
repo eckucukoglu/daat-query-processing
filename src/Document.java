@@ -26,7 +26,8 @@ public class Document implements Comparator<Document> {
 	 * Default constructor for Document.
 	 */
 	public Document() {
-		
+		this.docid = 0;
+		this.score = 0;
 	}
 
 	/**

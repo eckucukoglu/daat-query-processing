@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 
 /**
  *  Common Parser class.
@@ -40,8 +39,8 @@ public class Parser {
 	 * 
 	 * @return document lengths.
 	 */
-	public static float[] getDocLengths () {
-		float[] docLength = new float[NUMBEROFDOCUMENTS];
+	public static double[] getDocLengths () {
+		double[] docLength = new double[NUMBEROFDOCUMENTS];
 		
 		Path path = Paths.get(System.getProperty("user.dir"), DATADIR, LENGTHSFILE);
 		InputStream in;
@@ -53,7 +52,7 @@ public class Parser {
 	        int i = 0;
 	        while ((line = reader.readLine()) != null) {
 	        	String [] res = line.split(WORD_SEPERATOR);
-	        	docLength[i++] = Float.parseFloat(res[1]);
+	        	docLength[i++] = Double.parseDouble(res[1]);
 	        }
 	        
 	        reader.close();
@@ -88,12 +87,12 @@ public class Parser {
 	        while ((line = reader.readLine()) != null) {
 	        	String token;
 	        	int lengthOfPostingsList;
-	        	float idf;
+	        	double idf;
 	        	
 	        	String [] res = line.split(WORD_SEPERATOR);
 	        	token = res[0];
 	        	lengthOfPostingsList = Integer.parseInt(res[1]);
-	        	idf = Float.parseFloat(res[2]);	        	
+	        	idf = Double.parseDouble(res[2]);	        	
 	        	
 	        	dictionaryTerms[i++] = new Term(token, lengthOfPostingsList, idf);
 	        }

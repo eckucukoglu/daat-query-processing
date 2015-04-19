@@ -9,7 +9,7 @@ import java.util.Comparator;
 public class Document implements Comparator<Document> {
 
 	private int docid;
-	private float score;
+	private double score;
 	
 	/**
 	 * Constructor for Document.
@@ -17,7 +17,7 @@ public class Document implements Comparator<Document> {
 	 * @param docid document-id
 	 * @param score score of a document
 	 */
-	public Document (int docid, float score) {
+	public Document (int docid, double score) {
 		this.docid = docid;
 		this.score = score;
 	}
@@ -40,14 +40,14 @@ public class Document implements Comparator<Document> {
 	/**
 	 * @return the score
 	 */
-	public float getScore() {
+	public double getScore() {
 		return score;
 	}
 
 	@Override
 	public int compare(Document o1, Document o2) {
 		int retVal;
-		float scoreDifference = o1.getScore() - o2.getScore();
+		double scoreDifference = o1.getScore() - o2.getScore();
 		
 		if (scoreDifference == 0)
 			retVal = 0;

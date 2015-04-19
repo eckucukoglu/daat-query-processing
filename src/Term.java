@@ -9,7 +9,7 @@ public class Term {
 
 	private String token;
 	private int lengthOfPostingsList;
-	private float idf;
+	private double idf;
 	/** 
 	 * Term's starting position for a postings file. 
 	 * It should be computed on-the-fly from the beginning
@@ -25,7 +25,7 @@ public class Term {
 	 * @param lengthOfPostingsList	length of postings list.
 	 * @param idf	inverse document frequency
 	 */
-	public Term(String token, int lengthOfPostingsList, float idf) {
+	public Term(String token, int lengthOfPostingsList, double idf) {
 		this.token = token;
 		this.lengthOfPostingsList = lengthOfPostingsList;
 		this.idf = idf;
@@ -67,7 +67,7 @@ public class Term {
 	 * 
 	 * @return the idf
 	 */
-	public float getIdf() {
+	public double getIdf() {
 		return idf;
 	}
 

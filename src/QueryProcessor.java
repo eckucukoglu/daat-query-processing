@@ -22,7 +22,7 @@ public class QueryProcessor {
 
 	private Dictionary dictionary;
 	private Query[] queries;
-	private float[] vectorLengths;
+	private double[] vectorLengths;
 	private String mode = "DAAT"; /** Default selection **/
 	private int bracket; /** Iteration point for a query list **/
 	
@@ -34,7 +34,7 @@ public class QueryProcessor {
 	 * @param queries
 	 * @param vectorLengths
 	 */
-	public QueryProcessor (Dictionary dictionary, Query[] queries, float[] vectorLengths) {
+	public QueryProcessor (Dictionary dictionary, Query[] queries, double[] vectorLengths) {
 		this.dictionary = dictionary;
 		this.queries = queries;
 		this.vectorLengths = vectorLengths;
@@ -49,7 +49,7 @@ public class QueryProcessor {
 	 * @param queries
 	 * @param vectorLengths
 	 */
-	public QueryProcessor (String mode, Dictionary dictionary, Query[] queries, float[] vectorLengths) {
+	public QueryProcessor (String mode, Dictionary dictionary, Query[] queries, double[] vectorLengths) {
 		this.dictionary = dictionary;
 		this.queries = queries;
 		this.vectorLengths = vectorLengths;
@@ -95,7 +95,7 @@ public class QueryProcessor {
 	 * @param count
 	 * @return Winning documents in a heap structure
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Heap<Document>[] iterate (int count) {
 		Heap[] winningDocuments = null;
 		int times = 0;
@@ -171,32 +171,39 @@ public class QueryProcessor {
 	 * @return
 	 */
 	private Heap<Document> daatProcessing (ArrayList<Term> terms) {
-		int docidIndex = 0;
+		int docId = 0;
+		double documentScore = 0.0;
 		int[] docidIndexes = new int[terms.size()];
 		Posting[][] postings = new Posting[terms.size()][];
+		ArrayList<Document> documentScores = new ArrayList<Document>();
 				
-		for (int i = 0; i < terms.size(); ++i) {
+		for (int i = 0; i < terms.size(); ++i)
 			postings[i] = Parser.getPostings(terms.get(i).getPostingsIndex(), terms.get(i).getLength());
-			docidIndexes[i] = 0;
-		}
 		
-		boolean finished = false;
-		
-		while (!finished) {
+		do {
+			docidIndexes = this.assignNextDocIds(postings, docidIndexes);
 			
+			docId = docidIndexes[findMin(docidIndexes)];
+			documentScore = 0.0;
+					
 			for (int i = 0; i < terms.size(); ++i) {
-				docidIndexes[i] = postings[i][0].getDocid();
+				for (int j = 0; j < postings[i].length; ++j) {
+					if (postings[i][j].getDocid() == docId) {
+						documentScore = documentScore + (terms.get(i).getIdf() * postings[i][j].getTf());
+						break;
+					}
+				}
 			}
 			
-			docidIndex = findMin(docidIndexes);
-			// TODO:
+			documentScore = this.normalizeScore(docId, documentScore);
+			documentScore = documentScore * (-1);
+			documentScores.add(new Document(docId, documentScore));
 			
-			
-		}
+		} while (this.checkDocIndexes(docidIndexes));
 		
+		// TODO:
 		
 		return null;
-		
 	}
 
 	/**
@@ -212,6 +219,69 @@ public class QueryProcessor {
 		
 		return null;
 		
+	}
+	
+	/**
+	 * Normalize document score.
+	 * 
+	 * @param docId
+	 * @param documentScore
+	 * @return normalized score
+	 */
+	private double normalizeScore(int docId, double documentScore) {
+		return (documentScore/this.vectorLengths[docId]);
+	}
+	
+	/**
+	 * Returns the index array if next document-id 
+	 * in the postings according to given document-id
+	 * list's minimum doc-id.
+	 * 
+	 * @param postings
+	 * @param docidIndexes
+	 * @return array of next document ids
+	 */
+	private int[] assignNextDocIds (Posting[][] postings, int[] docidIndexes) {
+		int[] retVal = new int[docidIndexes.length];
+		retVal = docidIndexes;
+		
+		int docId = docidIndexes[findMin(docidIndexes)];
+		
+		for (int i = 0; i < postings.length; ++i) {
+			if (docId == 0)
+				retVal[i] = postings[i][0].getDocid();
+			else {
+				for (int j = 0; j < postings[i].length; ++j) {
+					if (postings[i][j].getDocid() > docId) {
+						break;
+					} else if (postings[i][j].getDocid() == docId) {
+						if (j == (postings[i].length)-1) {
+							retVal[i] = -1; 
+						} else
+							retVal[i] = postings[i][j+1].getDocid();
+						break;
+					}
+				}
+			}
+		}
+		
+		return retVal;
+	}
+	
+	/**
+	 * Document-id indexes are set -1 if all postings processed.
+	 * This determines the continuity of process loop.
+	 * 
+	 * @param array
+	 * @return false if all elements -1, true otherwise. 
+	 */
+	private boolean checkDocIndexes (int[] array) {
+		for (int i = 0; i < array.length; ++i) {
+			if (array[i] != -1)
+				return true;
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -231,7 +301,7 @@ public class QueryProcessor {
 	/**
 	 * @return the vectorLengths
 	 */
-	public float[] getVectorLengths() {
+	public double[] getVectorLengths() {
 		return vectorLengths;
 	}
 
@@ -256,14 +326,16 @@ public class QueryProcessor {
 	 * @return index of minimum element
 	 */
 	static int findMin (int[] array) {
-		int min = array[0];
+		int index = 0;
+		int min = array[index];
 		
 		for (int i = 0; i < array.length; ++i) {
-			if (min > array[i]) {
+			if (min > array[i] && array[i] > 0) {
 				min = array[i];
+				index = i;
 			}
 		}
 		
-		return min;
+		return index;
 	}
 }

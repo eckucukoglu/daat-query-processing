@@ -91,8 +91,10 @@ public class QueryProcessor {
 		
 		ArrayList<Term> terms = this.findMatchingTerms(this.queries[this.bracket]);
 		
-		if (terms.size() == 0)
+		if (terms.size() == 0) {
+			this.bracket = this.bracket + 1;
 			return null;
+		}
 		
 		Heap<Document> winners = null;
 		
@@ -119,6 +121,7 @@ public class QueryProcessor {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Heap<Document>[] iterate (int count) {
 		Heap[] winningDocuments = null;
+		double avgEvalPostingNo = 0;
 		int times = 0;
 		
 		if (count < 0)
@@ -130,8 +133,15 @@ public class QueryProcessor {
 		
 		winningDocuments = new Heap[times];
 		
-		for (int i = 0; i < times; ++i)
+		for (int i = 0; i < times; ++i) {
+			System.out.println("Analyzing query: " + i);
 			winningDocuments[i] = this.iterate();
+			avgEvalPostingNo = avgEvalPostingNo + this.queries[i].getEvalPostingNo();
+		}
+		
+		avgEvalPostingNo = avgEvalPostingNo / times;
+		
+		System.out.println("Avg. evalPostingNo: " + avgEvalPostingNo);
 		
 		return winningDocuments;
 	}
@@ -212,8 +222,11 @@ public class QueryProcessor {
 		
 		do {
 			docId = docidIndexes[findMin(docidIndexes)];
+			
+			if (docId < 0)
+				break;
 			documentScore = 0.0;
-					
+			
 			for (int i = 0; i < terms.size(); ++i) {
 				int index = Arrays.binarySearch(postings[i], new Posting(docId));
 				
@@ -228,6 +241,7 @@ public class QueryProcessor {
 			
 			documentScore = this.normalizeScore(docId, documentScore);
 			documentScore = documentScore * (-1);
+			
 			minHeap.insert(new Document(docId, documentScore));
 			
 			docidIndexes = this.assignNextDocIds(postings, docidIndexes);
@@ -247,9 +261,50 @@ public class QueryProcessor {
 	 * @return
 	 */
 	private Heap<Document> daatProcessing (String optimization, ArrayList<Term> terms) {
+		int docId = 0;
+		double documentScore = 0.0;
+		int evalPostingNo = 0;
+		int[] docidIndexes = new int[terms.size()];
+		Posting[][] postings = new Posting[terms.size()][];
+		Heap<Document> minHeap = new Heap<Document>(new Document());
+				
+		for (int i = 0; i < terms.size(); ++i) {
+			postings[i] = Parser.getPostings(terms.get(i).getPostingsIndex(), terms.get(i).getLength());
+			docidIndexes[i] = 0;
+		}
 		
+		docidIndexes = this.assignNextDocIds(postings, docidIndexes);
 		
-		return null;
+		do {
+			docId = docidIndexes[findMin(docidIndexes)];
+			
+			if (docId < 0)
+				break;
+			documentScore = 0.0;
+			
+			for (int i = 0; i < terms.size(); ++i) {
+				int index = Arrays.binarySearch(postings[i], new Posting(docId));
+				
+				/** Term's postings list does not have specified document-id **/
+				if (index < 0) {
+					continue;
+				}
+				
+				documentScore = documentScore + (terms.get(i).getIdf() * postings[i][index].getTf());
+				evalPostingNo = evalPostingNo + 1;
+			}
+			
+			documentScore = this.normalizeScore(docId, documentScore);
+			documentScore = documentScore * (-1);
+			
+			minHeap.insert(new Document(docId, documentScore));
+			
+			docidIndexes = this.assignNextDocIds(postings, docidIndexes);
+		} while (this.checkDocIndexes(docidIndexes));
+		
+		this.queries[this.bracket].setEvalPostingNo(evalPostingNo);
+		
+		return minHeap;
 		
 	}
 	
@@ -294,25 +349,6 @@ public class QueryProcessor {
 			}
 			
 		}
-		
-		
-//		for (int i = 0; i < postings.length; ++i) {
-//			if (docId == 0)
-//				retVal[i] = postings[i][0].getDocid();
-//			else { 
-//				for (int j = 0; j < postings[i].length; ++j) {
-//					if (postings[i][j].getDocid() > docId) {
-//						break;
-//					} else if (postings[i][j].getDocid() == docId) {
-//						if (j == (postings[i].length)-1) {
-//							retVal[i] = -1; 
-//						} else
-//							retVal[i] = postings[i][j+1].getDocid();
-//						break;
-//					}
-//				}
-//			}
-//		}
 		
 		return retVal;
 	}
@@ -384,7 +420,7 @@ public class QueryProcessor {
 	 */
 	static int findMin (int[] array) {
 		int index = 0;
-		int min = array[index];
+		int min = 223605000;
 		
 		for (int i = 0; i < array.length; ++i) {
 			if (min > array[i] && array[i] > 0) {

@@ -23,12 +23,12 @@ public class Analyzer {
 		QueryProcessor qp = new QueryProcessor(dictionary, queries, documentLengths);
 		// QueryProcessor qpw = new QueryProcessor("DAAT+WAND", dictionary, queries, documentLengths);
 		
-		//Heap<Document>[] resultants = qp.iterate(0);
-		Heap<Document> winningDocuments = qp.iterate();
-		for (int i = 0; i < k; ++i) {
-			Document doc = winningDocuments.pop();
-			System.out.println("Top " + (i+1) + ": " + doc.getDocid() + " " + doc.getScore());
-		}
+		Heap<Document>[] resultants = qp.iterate(0);
+//		Heap<Document> winningDocuments = qp.iterate();
+//		for (int i = 0; i < k; ++i) {
+//			Document doc = winningDocuments.pop();
+//			System.out.println("Top " + (i+1) + ": " + doc.getDocid() + " " + doc.getScore());
+//		}
 		
 		return;
 	}

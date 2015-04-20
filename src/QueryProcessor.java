@@ -122,6 +122,7 @@ public class QueryProcessor {
 	public Heap<Document>[] iterate (int count) {
 		Heap[] winningDocuments = null;
 		double avgEvalPostingNo = 0;
+		double avgNonEvalPostingNo = 0;
 		int times = 0;
 		
 		if (count < 0)
@@ -137,11 +138,14 @@ public class QueryProcessor {
 			System.out.println("Analyzing query: " + i);
 			winningDocuments[i] = this.iterate();
 			avgEvalPostingNo = avgEvalPostingNo + this.queries[i].getEvalPostingNo();
+			avgNonEvalPostingNo = avgNonEvalPostingNo + this.queries[i].getNonEvalPostingNo();
 		}
 		
 		avgEvalPostingNo = avgEvalPostingNo / times;
+		avgNonEvalPostingNo = avgNonEvalPostingNo / times;
 		
 		System.out.println("Avg. evalPostingNo: " + avgEvalPostingNo);
+		System.out.println("Avg. nonEvalPostingNo: " + avgNonEvalPostingNo);
 		
 		return winningDocuments;
 	}
@@ -264,10 +268,12 @@ public class QueryProcessor {
 		int docId = 0;
 		double documentScore = 0.0;
 		int evalPostingNo = 0;
+		int nonEvalPostingNo = 0;
 		int[] docidIndexes = new int[terms.size()];
 		Posting[][] postings = new Posting[terms.size()][];
 		Heap<Document> minHeap = new Heap<Document>(new Document());
-				
+		double scoreThreshold = 0;
+		
 		for (int i = 0; i < terms.size(); ++i) {
 			postings[i] = Parser.getPostings(terms.get(i).getPostingsIndex(), terms.get(i).getLength());
 			docidIndexes[i] = 0;
@@ -282,32 +288,81 @@ public class QueryProcessor {
 				break;
 			documentScore = 0.0;
 			
-			for (int i = 0; i < terms.size(); ++i) {
-				int index = Arrays.binarySearch(postings[i], new Posting(docId));
+			if (scoreThreshold > this.computeWANDthreshold(docId, terms, postings)) {
 				
-				/** Term's postings list does not have specified document-id **/
-				if (index < 0) {
-					continue;
+				for (int i = 0; i < terms.size(); ++i) {
+					int index = Arrays.binarySearch(postings[i], new Posting(docId));
+					
+					/** Term's postings list does not have specified document-id **/
+					if (index < 0) {
+						continue;
+					}
+					
+					documentScore = documentScore + (terms.get(i).getIdf() * postings[i][index].getTf());
+					evalPostingNo = evalPostingNo + 1;
 				}
+			
+				documentScore = this.normalizeScore(docId, documentScore);
+				documentScore = documentScore * (-1);
 				
-				documentScore = documentScore + (terms.get(i).getIdf() * postings[i][index].getTf());
-				evalPostingNo = evalPostingNo + 1;
+				minHeap.insert(new Document(docId, documentScore));
+				scoreThreshold = this.getNewThreshold(minHeap); /** cosine value of k'th element of a heap **/
+			} else {
+				nonEvalPostingNo = nonEvalPostingNo + 1;
 			}
-			
-			documentScore = this.normalizeScore(docId, documentScore);
-			documentScore = documentScore * (-1);
-			
-			minHeap.insert(new Document(docId, documentScore));
 			
 			docidIndexes = this.assignNextDocIds(postings, docidIndexes);
 		} while (this.checkDocIndexes(docidIndexes));
 		
 		this.queries[this.bracket].setEvalPostingNo(evalPostingNo);
+		this.queries[this.bracket].setNonEvalPostingNo(nonEvalPostingNo);
 		
 		return minHeap;
 		
 	}
 	
+	
+	private double getNewThreshold(Heap<Document> minHeap) {
+		ArrayList<Document> backup = new ArrayList<Document>();
+		
+		for (int i = 0; 0 < minHeap.size() && i < this.k; ++i)
+			backup.add(minHeap.pop());
+		
+		minHeap.clear();
+		
+		for (int i = 0; i < backup.size(); ++i)
+			minHeap.insert(backup.get(i));
+		
+		return backup.get(backup.size()-1).getScore();
+	}
+
+	/**
+	 * WAND threshold computatiton.
+	 * 
+	 * Simply, sum of idf/3 value of terms in the document. 
+	 * 
+	 * @param docId
+	 * @param terms
+	 * @param postings
+	 * @return
+	 */
+	private double computeWANDthreshold(int docId, ArrayList<Term> terms, Posting[][] postings) {
+		double retVal = 0.0;
+		
+		for (int i = 0; i < postings.length; ++i) {
+			int index = Arrays.binarySearch(postings[i], new Posting(docId));
+			if (index < 0)
+				continue;
+			
+			retVal = retVal + (terms.get(i).getIdf() / 3);
+			
+		}
+		
+		retVal = retVal * -1;
+		
+		return retVal;
+	}
+
 	/**
 	 * Normalize document score.
 	 * 

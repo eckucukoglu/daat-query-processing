@@ -15,16 +15,16 @@ public class Analyzer {
 	 * @param Comparator 
 	 */
 	public static void main(String[] args) {
-		int k = 10;
+		int k = 2;
 		Dictionary dictionary = new Dictionary(Parser.getDictionaryTerms());
 		Query[] queries = Parser.getQueries();
 		double[] documentLengths = Parser.getDocLengths(); 
 		
-		QueryProcessor qp = new QueryProcessor(dictionary, queries, documentLengths);
-		// QueryProcessor qpw = new QueryProcessor("DAAT+WAND", dictionary, queries, documentLengths);
+		//QueryProcessor qp = new QueryProcessor(dictionary, queries, documentLengths);
+		QueryProcessor qpw = new QueryProcessor("DAAT+WAND", dictionary, queries, documentLengths);
 		
-		Heap<Document>[] resultants = qp.iterate(0);
-//		Heap<Document> winningDocuments = qp.iterate();
+		Heap<Document>[] resultants = qpw.iterate(0);
+//		Heap<Document> winningDocuments = qpw.iterate();
 //		for (int i = 0; i < k; ++i) {
 //			Document doc = winningDocuments.pop();
 //			System.out.println("Top " + (i+1) + ": " + doc.getDocid() + " " + doc.getScore());

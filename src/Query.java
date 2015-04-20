@@ -8,6 +8,7 @@ public class Query {
 	
 	private String[] words;
 	private int EvalPostingNo;
+	private int NonEvalPostingNo;
 	
 	/**
 	 * Constructor for query.
@@ -39,5 +40,19 @@ public class Query {
 	 */
 	public void setEvalPostingNo(int evalPostingNo) {
 		EvalPostingNo = evalPostingNo;
+	}
+
+	/**
+	 * @return the nonEvalPostingNo
+	 */
+	public int getNonEvalPostingNo() {
+		return NonEvalPostingNo;
+	}
+
+	/**
+	 * @param nonEvalPostingNo the nonEvalPostingNo to set
+	 */
+	public void setNonEvalPostingNo(int nonEvalPostingNo) {
+		NonEvalPostingNo = nonEvalPostingNo;
 	}
 }

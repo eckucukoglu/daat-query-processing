@@ -18,7 +18,7 @@ public class Analyzer {
 	 * @param Comparator 
 	 */
 	public static void main(String[] args) {
-		
+		int k = 10;
 		Dictionary dictionary = new Dictionary(Parser.getDictionaryTerms());
 		Query[] queries = Parser.getQueries();
 		double[] documentLengths = Parser.getDocLengths(); 
@@ -28,7 +28,11 @@ public class Analyzer {
 		
 		//Heap<Document>[] resultants = qp.iterate(0);
 		Heap<Document> winningDocuments = qp.iterate();
-		System.out.println(1);
+		for (int i = 0; i < k; ++i) {
+			Document doc = winningDocuments.pop();
+			System.out.println("Top " + (i+1) + ": " + doc.getDocid() + " " + doc.getScore());
+		}
+		
 	}
 
 }

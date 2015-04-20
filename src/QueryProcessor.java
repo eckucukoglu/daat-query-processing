@@ -23,6 +23,7 @@ public class QueryProcessor {
 	private Dictionary dictionary;
 	private Query[] queries;
 	private double[] vectorLengths;
+	private int k = 2; /** max heap space, 2 as default **/
 	private String mode = "DAAT"; /** Default selection **/
 	private int bracket; /** Iteration point for a query list **/
 	
@@ -42,7 +43,26 @@ public class QueryProcessor {
 	}
 	
 	/**
+	 * Constructor for QueryProcessor with mode selection
+	 * and max heap size option.
+	 * 
+	 * @param mode
+	 * @param dictionary
+	 * @param queries
+	 * @param vectorLengths
+	 */
+	public QueryProcessor (String mode, Dictionary dictionary, Query[] queries, double[] vectorLengths, int k) {
+		this.dictionary = dictionary;
+		this.queries = queries;
+		this.vectorLengths = vectorLengths;
+		this.mode = mode;
+		this.bracket = 0;
+		this.k = k;
+	}
+	
+	/**
 	 * Constructor for QueryProcessor with mode selection.
+	 * Default max heap size assigned.
 	 * 
 	 * @param mode
 	 * @param dictionary
@@ -127,6 +147,7 @@ public class QueryProcessor {
 		Term term = null;
 		int postingsIndex = 0;
 		
+		// TODO: sequential search'u degistir.
 		for (int i = 0; i < this.dictionary.getTermlist().length; ++i) {
 			if (this.dictionary.getTermlist()[i].getToken().equals(word)) {
 				term = this.dictionary.getTermlist()[i];
@@ -175,14 +196,18 @@ public class QueryProcessor {
 		double documentScore = 0.0;
 		int[] docidIndexes = new int[terms.size()];
 		Posting[][] postings = new Posting[terms.size()][];
-		ArrayList<Document> documentScores = new ArrayList<Document>();
+		Heap<Document> minHeap = new Heap<Document>(new Document());
 				
-		for (int i = 0; i < terms.size(); ++i)
+		// TODO: Butun sequential search'leri degistir.
+		
+		for (int i = 0; i < terms.size(); ++i) {
 			postings[i] = Parser.getPostings(terms.get(i).getPostingsIndex(), terms.get(i).getLength());
+			docidIndexes[i] = 0;
+		}
+		
+		docidIndexes = this.assignNextDocIds(postings, docidIndexes);
 		
 		do {
-			docidIndexes = this.assignNextDocIds(postings, docidIndexes);
-			
 			docId = docidIndexes[findMin(docidIndexes)];
 			documentScore = 0.0;
 					
@@ -197,13 +222,12 @@ public class QueryProcessor {
 			
 			documentScore = this.normalizeScore(docId, documentScore);
 			documentScore = documentScore * (-1);
-			documentScores.add(new Document(docId, documentScore));
+			minHeap.insert(new Document(docId, documentScore));
 			
+			docidIndexes = this.assignNextDocIds(postings, docidIndexes);
 		} while (this.checkDocIndexes(docidIndexes));
 		
-		// TODO:
-		
-		return null;
+		return minHeap;
 	}
 
 	/**
@@ -229,7 +253,7 @@ public class QueryProcessor {
 	 * @return normalized score
 	 */
 	private double normalizeScore(int docId, double documentScore) {
-		return (documentScore/this.vectorLengths[docId]);
+		return (documentScore/this.vectorLengths[docId-1]);
 	}
 	
 	/**
@@ -250,7 +274,8 @@ public class QueryProcessor {
 		for (int i = 0; i < postings.length; ++i) {
 			if (docId == 0)
 				retVal[i] = postings[i][0].getDocid();
-			else {
+			else { 
+				//TODO: iyilestirme yapilabilir mi bak.
 				for (int j = 0; j < postings[i].length; ++j) {
 					if (postings[i][j].getDocid() > docId) {
 						break;
@@ -306,6 +331,13 @@ public class QueryProcessor {
 	}
 
 	/**
+	 * @return max heap size
+	 */
+	public int getK() {
+		return k;
+	}
+	
+	/**
 	 * @return the mode
 	 */
 	public String getMode() {
@@ -321,6 +353,7 @@ public class QueryProcessor {
 	
 	/**
 	 * Find min value in the array and return its index.
+	 * Discard negative values.
 	 * 
 	 * @param array
 	 * @return index of minimum element

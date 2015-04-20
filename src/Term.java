@@ -1,3 +1,5 @@
+import java.util.Comparator;
+
 /**
  *  This class represents Term.
  *  Each Term has token as a string value,
@@ -5,7 +7,7 @@
  *  precomputed idf value.
  *  
  */
-public class Term {
+public class Term implements Comparable<Term>, Comparator<Term> {
 
 	private String token;
 	private int lengthOfPostingsList;
@@ -17,6 +19,18 @@ public class Term {
 	 * it can not changed, remembering it is a good idea.
 	 */
 	private int postingsIndex; 
+	
+	/**
+	 * Constructor for term.
+	 * 
+	 * @param token	token of the term.
+	 */
+	public Term(String token) {
+		this.token = token;
+		this.lengthOfPostingsList = 0;
+		this.idf = 0;
+		this.postingsIndex = -1;
+	}
 	
 	/**
 	 * Constructor for term.
@@ -84,5 +98,15 @@ public class Term {
 	 */
 	public void setPostingsIndex(int index) {
 		this.postingsIndex = index;
+	}
+
+	@Override
+	public int compare(Term o1, Term o2) {
+		return o1.getToken().compareTo(o2.getToken());
+	}
+
+	@Override
+	public int compareTo(Term arg0) {
+		return this.token.compareTo(arg0.getToken());
 	}
 }

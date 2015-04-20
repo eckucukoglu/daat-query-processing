@@ -7,6 +7,7 @@
 public class Query {
 	
 	private String[] words;
+	private int EvalPostingNo;
 	
 	/**
 	 * Constructor for query.
@@ -16,6 +17,7 @@ public class Query {
 	public Query(String[] words) {
 		
 		this.words = words;
+		this.EvalPostingNo = 0;
 	}
 	
 	/**
@@ -23,5 +25,19 @@ public class Query {
 	 */
 	public String[] getWords() {
 		return words;
+	}
+
+	/**
+	 * @return the evalPostingNo
+	 */
+	public int getEvalPostingNo() {
+		return EvalPostingNo;
+	}
+
+	/**
+	 * @param evalPostingNo the evalPostingNo to set
+	 */
+	public void setEvalPostingNo(int evalPostingNo) {
+		EvalPostingNo = evalPostingNo;
 	}
 }

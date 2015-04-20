@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * This class processes the queries.
@@ -147,7 +148,10 @@ public class QueryProcessor {
 		Term term = null;
 		int postingsIndex = 0;
 		
-		// TODO: sequential search'u degistir.
+		/** Binary search can be used to get matching term's index **/
+		/** int index = Arrays.binarySearch(this.dictionary.getTermlist(), new Term(word)); **/
+		
+		/** Sequential search is obligatory to compute postings file index **/
 		for (int i = 0; i < this.dictionary.getTermlist().length; ++i) {
 			if (this.dictionary.getTermlist()[i].getToken().equals(word)) {
 				term = this.dictionary.getTermlist()[i];
@@ -194,12 +198,11 @@ public class QueryProcessor {
 	private Heap<Document> daatProcessing (ArrayList<Term> terms) {
 		int docId = 0;
 		double documentScore = 0.0;
+		int evalPostingNo = 0;
 		int[] docidIndexes = new int[terms.size()];
 		Posting[][] postings = new Posting[terms.size()][];
 		Heap<Document> minHeap = new Heap<Document>(new Document());
 				
-		// TODO: Butun sequential search'leri degistir.
-		
 		for (int i = 0; i < terms.size(); ++i) {
 			postings[i] = Parser.getPostings(terms.get(i).getPostingsIndex(), terms.get(i).getLength());
 			docidIndexes[i] = 0;
@@ -212,12 +215,15 @@ public class QueryProcessor {
 			documentScore = 0.0;
 					
 			for (int i = 0; i < terms.size(); ++i) {
-				for (int j = 0; j < postings[i].length; ++j) {
-					if (postings[i][j].getDocid() == docId) {
-						documentScore = documentScore + (terms.get(i).getIdf() * postings[i][j].getTf());
-						break;
-					}
+				int index = Arrays.binarySearch(postings[i], new Posting(docId));
+				
+				/** Term's postings list does not have specified document-id **/
+				if (index < 0) {
+					continue;
 				}
+				
+				documentScore = documentScore + (terms.get(i).getIdf() * postings[i][index].getTf());
+				evalPostingNo = evalPostingNo + 1;
 			}
 			
 			documentScore = this.normalizeScore(docId, documentScore);
@@ -226,6 +232,8 @@ public class QueryProcessor {
 			
 			docidIndexes = this.assignNextDocIds(postings, docidIndexes);
 		} while (this.checkDocIndexes(docidIndexes));
+		
+		this.queries[this.bracket].setEvalPostingNo(evalPostingNo);
 		
 		return minHeap;
 	}
@@ -274,21 +282,37 @@ public class QueryProcessor {
 		for (int i = 0; i < postings.length; ++i) {
 			if (docId == 0)
 				retVal[i] = postings[i][0].getDocid();
-			else { 
-				//TODO: iyilestirme yapilabilir mi bak.
-				for (int j = 0; j < postings[i].length; ++j) {
-					if (postings[i][j].getDocid() > docId) {
-						break;
-					} else if (postings[i][j].getDocid() == docId) {
-						if (j == (postings[i].length)-1) {
-							retVal[i] = -1; 
-						} else
-							retVal[i] = postings[i][j+1].getDocid();
-						break;
-					}
-				}
+			else {
+				int index = Arrays.binarySearch(postings[i], new Posting(docId));
+				if (index < 0)
+					continue;
+				
+				if (index == (postings[i].length)-1) {
+					retVal[i] = -1; 
+				} else
+					retVal[i] = postings[i][index+1].getDocid();
 			}
+			
 		}
+		
+		
+//		for (int i = 0; i < postings.length; ++i) {
+//			if (docId == 0)
+//				retVal[i] = postings[i][0].getDocid();
+//			else { 
+//				for (int j = 0; j < postings[i].length; ++j) {
+//					if (postings[i][j].getDocid() > docId) {
+//						break;
+//					} else if (postings[i][j].getDocid() == docId) {
+//						if (j == (postings[i].length)-1) {
+//							retVal[i] = -1; 
+//						} else
+//							retVal[i] = postings[i][j+1].getDocid();
+//						break;
+//					}
+//				}
+//			}
+//		}
 		
 		return retVal;
 	}

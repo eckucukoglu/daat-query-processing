@@ -1,6 +1,3 @@
-import java.util.Arrays;
-import java.util.Comparator;
-
 /**
  *  Document-at-a-time (DAAT) query processing with WAND optimization
  *  @author Emre Can Kucukoglu
@@ -33,6 +30,7 @@ public class Analyzer {
 			System.out.println("Top " + (i+1) + ": " + doc.getDocid() + " " + doc.getScore());
 		}
 		
+		return;
 	}
 
 }

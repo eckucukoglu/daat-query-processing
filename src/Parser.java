@@ -152,7 +152,7 @@ public class Parser {
 	 * 
 	 * @param fromPosting from which posting position should be read.
 	 * @param lengthOfPostingsList length of postings list, read this number of times postings.
-	 * @return
+	 * @return postings
 	 */
 	public static Posting[] getPostings (int fromPosting, int lengthOfPostingsList) {
 		Posting[] postings = new Posting[lengthOfPostingsList];

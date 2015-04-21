@@ -25,7 +25,6 @@ public class Posting implements Comparable<Posting>, Comparator<Posting> {
 	 * Constructor for Posting.
 	 * 
 	 * @param docid
-	 * @param tf
 	 */
 	public Posting(int docid) {
 		this.docid = docid;

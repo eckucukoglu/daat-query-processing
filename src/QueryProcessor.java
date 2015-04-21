@@ -82,7 +82,7 @@ public class QueryProcessor {
 	 * Runs the processor one times and return resultant 
 	 * documents in a heap structure.
 	 * 
-	 * @return
+	 * @return winning documents in a heap
 	 */
 	public Heap<Document> iterate () {
 
@@ -207,7 +207,7 @@ public class QueryProcessor {
 	 * Document-at-a-time processing with given terms.
 	 * 
 	 * @param terms
-	 * @return
+	 * @return heap
 	 */
 	private Heap<Document> daatProcessing (ArrayList<Term> terms) {
 		int docId = 0;
@@ -262,7 +262,7 @@ public class QueryProcessor {
 	 * 
 	 * @param optimization
 	 * @param terms
-	 * @return
+	 * @return heap
 	 */
 	private Heap<Document> daatProcessing (String optimization, ArrayList<Term> terms) {
 		int docId = 0;
@@ -321,7 +321,13 @@ public class QueryProcessor {
 		
 	}
 	
-	
+	/**
+	 * According to max heap size, k'th element's
+	 * score value is returned.
+	 * 
+	 * @param minHeap
+	 * @return new threshold
+	 */
 	private double getNewThreshold(Heap<Document> minHeap) {
 		ArrayList<Document> backup = new ArrayList<Document>();
 		
@@ -344,7 +350,7 @@ public class QueryProcessor {
 	 * @param docId
 	 * @param terms
 	 * @param postings
-	 * @return
+	 * @return WAND threshold
 	 */
 	private double computeWANDthreshold(int docId, ArrayList<Term> terms, Posting[][] postings) {
 		double retVal = 0.0;

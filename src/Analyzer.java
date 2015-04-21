@@ -12,16 +12,15 @@ public class Analyzer {
 	 * Main function of project.
 	 *  
 	 * @param args
-	 * @param Comparator 
 	 */
 	public static void main(String[] args) {
-		int k = 2;
+		int k = 10;
 		Dictionary dictionary = new Dictionary(Parser.getDictionaryTerms());
 		Query[] queries = Parser.getQueries();
 		double[] documentLengths = Parser.getDocLengths(); 
 		
 		//QueryProcessor qp = new QueryProcessor(dictionary, queries, documentLengths);
-		QueryProcessor qpw = new QueryProcessor("DAAT+WAND", dictionary, queries, documentLengths);
+		QueryProcessor qpw = new QueryProcessor("DAAT+WAND", dictionary, queries, documentLengths, k);
 		
 		Heap<Document>[] resultants = qpw.iterate(0);
 //		Heap<Document> winningDocuments = qpw.iterate();

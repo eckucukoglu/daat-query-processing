@@ -145,7 +145,7 @@ public class Heap<T> {
 	/**
 	 * Returns an iterator that iterates over all elements of the heap, in no particular order.
 	 * 
-	 * @return
+	 * @return iterator
 	 */
 	public final Iterator<T> iterator() {
 		return new Iterator<T>() {

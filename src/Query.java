@@ -13,7 +13,7 @@ public class Query {
 	/**
 	 * Constructor for query.
 	 * 
-	 * @param query	raw query string.
+	 * @param words	raw query string.
 	 */
 	public Query(String[] words) {
 		

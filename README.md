@@ -38,5 +38,4 @@ and each integer takes 4 bytes in Little Endian form.
 
 # Additional documents
 
-* docs/PA-2015.pdf: Exact problem definition.
 * docs/report.pdf: Analysis report.
